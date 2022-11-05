@@ -12,3 +12,16 @@ clone https://github.com/mariodujic/Line-Counter
 cd Line-Counter
 cargo run <directory-path>
 ```
+
+## Config
+
+Directories and file types can be excluded from the table by editing root `config.toml` file.
+
+##### Example
+
+To exclude `build` and `idea` directory, and `txt` file type, `config.toml` should contain:
+```toml
+[excluded]
+dir = ['build', '.idea']
+ext = ['txt']
+```

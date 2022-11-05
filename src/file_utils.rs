@@ -1,22 +1,34 @@
-use std::collections::{BTreeMap};
+use std::collections::BTreeMap;
 use std::ffi::OsStr;
 use std::fs::File;
 use std::io;
 use std::io::BufRead;
-use std::path::{Path};
+use std::path::Path;
 
 use walkdir::WalkDir;
 
+use crate::config::get_config;
+
 pub fn retrieve_line_count_per_file(file_path: &str) -> BTreeMap<String, i32> {
+    let config = get_config();
+    let excluded_dir = config.excluded.dir;
+    let excluded_ext = config.excluded.ext;
+
     let path = Path::new(file_path);
     let mut file_data = BTreeMap::new();
 
-    for entry in WalkDir::new(path) {
+    for entry in WalkDir::new(path)
+        .follow_links(true)
+        .into_iter()
+        .filter_entry(|entry| {
+            !excluded_dir.contains(&entry.file_name().to_str().unwrap().to_string())
+        })
+    {
         if entry.is_ok() {
             let unwrapped_entry = entry.unwrap();
             let path = unwrapped_entry.path();
             let extension = path.extension().and_then(OsStr::to_str);
-            if extension != None && path.is_file() {
+            if extension != None && path.is_file() && !excluded_ext.contains(&extension.unwrap().to_string()) {
                 let lines = read_lines(path);
 
                 let mut total_lines_in_file = 0;
