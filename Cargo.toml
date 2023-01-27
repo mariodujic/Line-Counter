@@ -7,6 +7,6 @@ edition = "2021"
 
 [dependencies]
 walkdir = "2"
-prettytable-rs = "^0.9"
+prettytable-rs = "0.10"
 toml = "0.5.9"
 serde = { version = "1.0.147", features = ["derive"] }
